@@ -13,12 +13,12 @@
 
   (occ:box (- r) (- r) (- r) (* 2 r) (* 2 r) (* 2 r) :tag 1)
   (occ:sphere 0 0 0 rt :tag 2)
-  (occ:intersect '((3 . 1)) '((3 . 2)) :tag 3)
+  (occ:intersect (gmsh:volume-tags '(1)) (gmsh:volume-tags '(2)) :tag 3)
   (occ:cylinder (* -2 r) 0 0 (* 4 r) 0 0 rs :tag 4)
   (occ:cylinder 0 (* -2 r) 0 0 (* 4 r) 0 rs :tag 5)
   (occ:cylinder 0 0 (* -2 r) 0 0 (* 4 r) rs :tag 6)
-  (occ:fuse '((3 . 4) (3 . 5)) '((3 . 6)) :tag 7)
-  (occ:cut '((3 . 3)) '((3 . 7)) :tag 8))
+  (occ:fuse (gmsh:volume-tags '(4 5)) (gmsh:volume-tags '(6)) :tag 7)
+  (occ:cut (gmsh:volume-tags '(3)) (gmsh:volume-tags '(7)) :tag 8))
 
 (occ:synchronize)
 

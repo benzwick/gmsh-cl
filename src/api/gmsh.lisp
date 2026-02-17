@@ -2,7 +2,8 @@
 
 (in-package :gmsh)
 
-(export '(with-gmsh with-model start-gui with-recording record-call
+(export '(with-gmsh with-model start-gui with-gui-lock
+          with-recording record-call
           translate-geo-line translate-geo-file))
 
 (defmacro with-gmsh ((&rest options) &body body)
@@ -35,3 +36,12 @@
        (fltk:wait :time 0.05)
        (sleep 0.01)))
    :name "gmsh-fltk-event-loop"))
+
+(defmacro with-gui-lock (() &body body)
+  "Execute BODY with the FLTK GUI lock held, then awake the event loop.
+   Use this to safely update GUI state from threads other than the FLTK event loop."
+  `(progn
+     (fltk:lock)
+     (unwind-protect (progn ,@body)
+       (fltk:unlock)
+       (fltk:awake :action "update"))))

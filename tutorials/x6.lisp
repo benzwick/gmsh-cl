@@ -1,4 +1,12 @@
 ;;; x6.lisp — Additional mesh data: integration points, Jacobians and basis functions
+;;;
+;;; Demonstrates FEM building blocks: Gauss integration points, Lagrange
+;;; and GradLagrange basis functions, and Jacobian evaluation.
+;;;
+;;; Key API: mesh:get-integration-points, mesh:get-basis-functions,
+;;; mesh:get-jacobians, mesh:get-element-properties
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/x6.py
 
 ;; The API provides access to all the elementary building blocks required to
 ;; implement finite-element-type numerical methods.

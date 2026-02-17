@@ -1,4 +1,13 @@
 ;;; t5.lisp — Mesh sizes, holes in volumes
+;;;
+;;; Demonstrates creating volumes with spherical holes using the built-in
+;;; CAD kernel, surface filling for spherical patches, and physical groups.
+;;; Compare with t16.lisp which does the same geometry with OCC booleans.
+;;;
+;;; Key API: geo:circle-arc, geo:surface-filling, geo:surface-loop,
+;;; geo:volume (with multiple shells for holes)
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t5.py
 
 (gmsh:add "t5")
 

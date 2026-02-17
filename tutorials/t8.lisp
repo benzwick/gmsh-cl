@@ -1,4 +1,13 @@
 ;;; t8.lisp — Post-processing, image export and animations
+;;;
+;;; Demonstrates manipulating post-processing views: merging .pos files,
+;;; setting view options, building custom animations by changing options
+;;; at run-time and re-rendering.
+;;;
+;;; Key API: view:get-tags, view:option-set-number, view:option-get-number,
+;;; view:option-set-string, gmsh:draw
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t8.py
 
 ;; In addition to creating geometries and meshes, the API can also be used
 ;; to manipulate post-processing datasets (called "views" in Gmsh).

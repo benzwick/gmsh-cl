@@ -1,4 +1,11 @@
 ;;; t17.lisp — Anisotropic background mesh
+;;;
+;;; Demonstrates anisotropic meshing using a metric tensor field as a
+;;; background mesh. Requires the BAMG algorithm (Mesh.Algorithm = 7).
+;;;
+;;; Key API: mesh:field-add "PostView", opt:set-number "Mesh.Algorithm" 7
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t17.py
 
 ;; As seen in t7.lisp, mesh sizes can be specified very accurately by providing
 ;; a background mesh, i.e., a post-processing view that contains the target

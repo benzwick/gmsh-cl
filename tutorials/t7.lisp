@@ -1,4 +1,11 @@
 ;;; t7.lisp — Background meshes
+;;;
+;;; Demonstrates using a post-processing view as a background mesh to
+;;; control element sizes. See t10.lisp for general mesh size fields.
+;;;
+;;; Key API: mesh:field-add "PostView", mesh:field-set-as-background-mesh
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t7.py
 
 ;; Mesh sizes can be specified very accurately by providing a background mesh,
 ;; i.e., a post-processing view that contains the target mesh sizes.

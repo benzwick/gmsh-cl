@@ -288,3 +288,72 @@
 (test example-naca-boundary-layer-2d
   (with-gmsh-test ()
     (finishes (load (example-path "naca_boundary_layer_2d.lisp")))))
+
+;;; --- New examples: geometry ---
+
+(test example-thrusections
+  (with-gmsh-test ()
+    (finishes (load (example-path "thrusections.lisp")))))
+
+(test example-full-quad
+  (with-gmsh-test ()
+    (finishes (load (example-path "full_quad.lisp")))))
+
+(test example-primitives
+  (with-gmsh-test ()
+    (finishes (load (example-path "primitives.lisp")))))
+
+(test example-transfinite
+  (with-gmsh-test ()
+    (finishes (load (example-path "transfinite.lisp")))))
+
+(test example-hyperboloid
+  (with-gmsh-test ()
+    (finishes (load (example-path "hyperboloid.lisp")))))
+
+(test example-fleur
+  (with-gmsh-test ()
+    (finishes (load (example-path "fleur.lisp")))))
+
+(test example-fragment-surfaces
+  (with-gmsh-test ()
+    (finishes (load (example-path "fragment_surfaces.lisp")))))
+
+;;; --- New examples: mesh ---
+
+(test example-edges
+  (with-gmsh-test ()
+    (finishes (load (example-path "edges.lisp")))))
+
+(test example-faces
+  (with-gmsh-test ()
+    (finishes (load (example-path "faces.lisp")))))
+
+(test example-adapt-mesh
+  (with-gmsh-test ()
+    (finishes (load (example-path "adapt_mesh.lisp")))))
+
+(test example-stl-to-brep
+  (with-gmsh-test ()
+    (finishes (load (example-path "stl_to_brep.lisp")))))
+
+(test example-parametric-curves
+  (with-gmsh-test ()
+    (finishes (load (example-path "parametric_curves.lisp")))))
+
+(test example-compute-area-volume
+  (with-gmsh-test ()
+    (finishes (load (example-path "compute_area_volume.lisp")))))
+
+(test example-split-window
+  (with-gmsh-test ()
+    (finishes (load (example-path "split_window.lisp")))))
+
+(test example-select-elements
+  (with-gmsh-test ()
+    (finishes (load (example-path "select_elements.lisp")))))
+
+;;; naca_boundary_layer_3d takes a long time; run manually
+;; (test example-naca-boundary-layer-3d
+;;   (with-gmsh-test ()
+;;     (finishes (load (example-path "naca_boundary_layer_3d.lisp")))))

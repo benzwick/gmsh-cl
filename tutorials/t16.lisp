@@ -1,4 +1,13 @@
 ;;; t16.lisp — Constructive Solid Geometry, OpenCASCADE geometry kernel
+;;;
+;;; Demonstrates CSG with OCC: boolean cut/fragment, conformal meshing,
+;;; physical group assignment, and boundary identification via
+;;; get-closest-entities. Compare with t5.lisp (same geometry, built-in kernel).
+;;;
+;;; Key API: occ:box, occ:sphere, occ:cut, occ:fragment, gmsh:get-boundary,
+;;; occ:get-closest-entities
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t16.py
 
 ;; Instead of constructing a model in a bottom-up fashion with Gmsh's built-in
 ;; geometry kernel, starting with version 3 Gmsh allows you to directly use
@@ -17,7 +26,8 @@
 (occ:box 0 0 0 0.5 0.5 0.5 :tag 2)
 
 ;; We apply a boolean difference to create the "cube minus one eighth" shape:
-(occ:cut '((3 . 1)) '((3 . 2)) :tag 3)
+;; gmsh:volume-tags builds the required dim-tag pairs from tag lists
+(occ:cut (gmsh:volume-tags '(1)) (gmsh:volume-tags '(2)) :tag 3)
 
 ;; Boolean operations with OpenCASCADE always create new entities. By default
 ;; the extra arguments remove-object and remove-tool in cut() are set to t,
@@ -33,14 +43,14 @@
         do (incf x 0.166)
            (incf z 0.166)
            (occ:sphere x y z r :tag (+ 3 tt))
-           (push (cons 3 (+ 3 tt)) holes))
+           (push (gmsh:volume-tag (+ 3 tt)) holes))
   (setf holes (nreverse holes))
 
   ;; If we had wanted five empty holes we would have used cut() again. Here we
   ;; want five spherical inclusions, whose mesh should be conformal with the
   ;; mesh of the cube: we thus use fragment(), which intersects all volumes in
   ;; a conformal manner (without creating duplicate interfaces):
-  (multiple-value-bind (ov ovv) (occ:fragment '((3 . 3)) holes)
+  (multiple-value-bind (ov ovv) (occ:fragment (gmsh:volume-tags '(3)) holes)
 
     ;; ov contains all the generated entities of the same dimension as the
     ;; input entities:
@@ -68,8 +78,8 @@
           do (gmsh:add-physical-group 3 (list (+ 3 i)) :tag i))
 
     ;; The tag of the cube will change though, so we need to access it
-    ;; programmatically:
-    (gmsh:add-physical-group 3 (list (cdr (first ov))) :tag 10)
+    ;; programmatically — gmsh:tag extracts the tag from a dim-tag pair:
+    (gmsh:add-physical-group 3 (list (gmsh:tag (first ov))) :tag 10)
 
     ;; Creating entities using constructive solid geometry is very powerful,
     ;; but can lead to practical issues for e.g. setting mesh sizes at points,
@@ -84,7 +94,8 @@
     ;; two closest to point (1, 1, 0.5):
     (let* ((bnd (gmsh:get-boundary (gmsh:get-entities :dim 3)))
            (closest (occ:get-closest-entities 1 1 0.5 bnd :n 2)))
-      (gmsh:add-physical-group 2 (list (cdr (first closest)) (cdr (second closest)))
+      ;; gmsh:tags-of extracts all tags from a list of dim-tag pairs
+      (gmsh:add-physical-group 2 (gmsh:tags-of closest)
                                :tag 100
                                :name "Top & right surfaces"))
 

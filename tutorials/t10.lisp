@@ -1,4 +1,13 @@
 ;;; t10.lisp — Mesh size fields
+;;;
+;;; Demonstrates Distance, Threshold, MathEval, Box, and Min mesh size
+;;; fields, plus a custom size callback via CFFI.
+;;;
+;;; Key API: mesh:field-add, mesh:field-set-number, mesh:field-set-string,
+;;; mesh:field-set-numbers, mesh:field-set-as-background-mesh,
+;;; mesh:set-size-callback (with cffi:defcallback)
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t10.py
 
 ;; In addition to specifying target mesh sizes at the points of the geometry (see
 ;; t1.lisp) or using a background mesh (see t7.lisp), you can use general mesh
@@ -29,6 +38,12 @@
   ;; "Distance", and "Threshold". We first define a Distance field (Field[1]) on
   ;; points 5 and on curve 2. This field returns the distance to point 5 and to
   ;; (100 equidistant points on) curve 2.
+  ;;
+  ;; Note: the mesh:field helper (see src/api/fields.lisp) can create and
+  ;; configure a field in one call. The equivalent for this Distance field:
+  ;;   (mesh:field "Distance" :tag 1
+  ;;     :number-lists '(("PointsList" (5)) ("CurvesList" (2)))
+  ;;     :numbers '(("Sampling" 100)))
   (mesh:field-add "Distance" :tag 1)
   (mesh:field-set-numbers 1 "PointsList" '(5))
   (mesh:field-set-numbers 1 "CurvesList" '(2))
@@ -91,7 +106,13 @@
 (mesh:field-set-as-background-mesh 7)
 
 ;; The API also allows to set a global mesh size callback, which is called each
-;; time the mesh size is queried
+;; time the mesh size is queried.
+;;
+;; The mesh:define-size-callback macro (see src/api/mesh-helpers.lisp)
+;; simplifies this to:
+;;   (mesh:define-size-callback t10-size-callback (dim tag x y z lc)
+;;     (declare (ignore dim tag y z))
+;;     (min lc (+ (* 0.02d0 x) 0.01d0)))
 (cffi:defcallback t10-size-callback :double ((dim :int) (tag :int)
                                              (x :double) (y :double)
                                              (z :double) (lc :double))

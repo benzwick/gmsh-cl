@@ -1,4 +1,13 @@
 ;;; x3.lisp — Post-processing data import: list-based
+;;;
+;;; Demonstrates creating list-based post-processing views with scalar,
+;;; vector, and tensor fields on various element types. Also shows
+;;; high-order interpolation matrices and adaptive visualization.
+;;;
+;;; Key API: view:add, view:add-list-data, view:add-list-data-string,
+;;; view:set-interpolation-matrices, view:probe
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/x3.py
 
 ;; Gmsh supports two types of post-processing data: "list-based" and
 ;; "model-based". Both types of data are handled through the `view' interface.

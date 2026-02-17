@@ -1,4 +1,13 @@
 ;;; t3.lisp — Extruded meshes, ONELAB parameters, options
+;;;
+;;; Demonstrates extrusion (translation, revolution, twist) of 2D meshes
+;;; into 3D, layered mesh control, ONELAB parameter database, and gmsh
+;;; option manipulation.
+;;;
+;;; Key API: geo:extrude, geo:revolve, geo:twist, onelab:set/get-number,
+;;; opt:set-number, opt:set-color, opt:get-color
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t3.py
 
 ;; Let us now change some options... Since all interactive options are accessible
 ;; through the API, we can for example make point tags visible or redefine some

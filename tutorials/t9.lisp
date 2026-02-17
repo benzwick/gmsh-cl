@@ -1,4 +1,11 @@
 ;;; t9.lisp — Plugins
+;;;
+;;; Demonstrates the Gmsh plugin system: Isosurface extraction, CutPlane
+;;; sections, and Annotate text overlays on post-processing views.
+;;;
+;;; Key API: plugin:set-number, plugin:set-string, plugin:run
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t9.py
 
 ;; Plugins can be added to Gmsh in order to extend its capabilities. For example,
 ;; post-processing plugins can modify views, or create new views based on

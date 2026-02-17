@@ -1,4 +1,12 @@
 ;;; x4.lisp — Post-processing data import: model-based
+;;;
+;;; Demonstrates model-based post-processing views: NodeData and
+;;; ElementNodeData on hand-built meshes, and views spanning multiple models.
+;;;
+;;; Key API: gmsh:add-discrete-entity, mesh:add-nodes, mesh:add-elements-by-type,
+;;; view:add-homogeneous-model-data
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/x4.py
 
 ;; Contrary to list-based views (see x3.lisp), model-based views are based on
 ;; one or more meshes. Compared to list-based views, they are thus linked to one

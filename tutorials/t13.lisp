@@ -1,4 +1,12 @@
 ;;; t13.lisp — Remeshing an STL file without an underlying CAD model
+;;;
+;;; Demonstrates discrete surface remeshing: classify-surfaces to detect
+;;; features, create-geometry for parametrization, and remeshing with a
+;;; custom MathEval size field.
+;;;
+;;; Key API: mesh:classify-surfaces, mesh:create-geometry, mesh:field-add
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/t13.py
 
 ;; Create ONELAB parameters with remeshing options:
 (onelab:set "[

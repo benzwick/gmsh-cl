@@ -37,6 +37,9 @@
      (:module "api"
       :components
       ((:file "gmsh")
+       (:file "dim-tags")
+       (:file "fields")
+       (:file "mesh-helpers")
        (:file "geo")
        (:file "occ")
        (:file "recording")))))))

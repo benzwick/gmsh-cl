@@ -1,4 +1,12 @@
 ;;; x1.lisp — Geometry and mesh data
+;;;
+;;; Explores the gmsh data model: iterating over entities, querying mesh
+;;; nodes/elements, adjacencies, physical groups, and element properties.
+;;;
+;;; Key API: gmsh:get-entities, mesh:get-nodes, mesh:get-elements,
+;;; gmsh:get-adjacencies, mesh:get-element-properties
+;;;
+;;; Equivalent Python: gmsh/tutorials/python/x1.py
 
 ;; The API allows to do much more than what can be done in .geo files. These
 ;; additional features are introduced gradually in the extended tutorials,
