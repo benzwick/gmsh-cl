@@ -28,6 +28,13 @@
 
 (defpackage :gmsh
   (:use :cl :gmsh/internal)
+  (:shadow
+   #:list
+   #:merge
+   #:open
+   #:remove
+   #:write
+  )
   (:export
    #:add
    #:add-discrete-entity
@@ -131,6 +138,9 @@
 (defpackage :gmsh/geo
   (:use :cl :gmsh/internal)
   (:nicknames :geo)
+  (:shadow
+   #:remove
+  )
   (:export
    #:b-spline
    #:bezier
@@ -182,6 +192,10 @@
 (defpackage :gmsh/logger
   (:use :cl :gmsh/internal)
   (:nicknames :logger)
+  (:shadow
+   #:get
+   #:write
+  )
   (:export
    #:get
    #:get-cpu-time
@@ -197,6 +211,10 @@
 (defpackage :gmsh/mesh
   (:use :cl :gmsh/internal)
   (:nicknames :mesh)
+  (:shadow
+   #:optimize
+   #:reverse
+  )
   (:export
    #:add-edges
    #:add-elements
@@ -326,6 +344,9 @@
 (defpackage :gmsh/occ
   (:use :cl :gmsh/internal)
   (:nicknames :occ)
+  (:shadow
+   #:remove
+  )
   (:export
    #:affine-transform
    #:b-spline
@@ -402,6 +423,10 @@
 (defpackage :gmsh/onelab
   (:use :cl :gmsh/internal)
   (:nicknames :onelab)
+  (:shadow
+   #:get
+   #:set
+  )
   (:export
    #:clear
    #:get
@@ -454,6 +479,10 @@
 (defpackage :gmsh/view
   (:use :cl :gmsh/internal)
   (:nicknames :view)
+  (:shadow
+   #:remove
+   #:write
+  )
   (:export
    #:add
    #:add-alias
