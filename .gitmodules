@@ -1,3 +1,4 @@
 [submodule "_reference/gmsh"]
 	path = _reference/gmsh
-	url = https://gitlab.onelab.info/gmsh/gmsh.git
+	url = https://github.com/benzwick/gmsh.git
+	branch = bz/lisp-scripting-language
