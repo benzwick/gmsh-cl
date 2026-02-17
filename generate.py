@@ -896,18 +896,32 @@ with open(os.path.join(OUTDIR, 'packages.lisp'), 'w') as f:
     f.write('   #:%free\n')
     f.write('   #:%malloc))\n\n')
 
+    # Get the set of CL exported symbol names by asking SBCL
+    import subprocess
+    result = subprocess.run(
+        ['sbcl', '--non-interactive', '--eval',
+         '(do-external-symbols (s :cl) (write-line (string-downcase (symbol-name s))))'],
+        capture_output=True, text=True)
+    cl_symbols = set(result.stdout.strip().split('\n'))
+
     # Now each user-facing package
     # Order: gmsh first, then the rest alphabetically
     pkg_order = ['gmsh'] + sorted(p for p in all_exports if p != 'gmsh')
     for pkg in pkg_order:
         exports = sorted(all_exports[pkg])
         nicknames = PACKAGE_NICKNAMES.get(pkg, [])
+        shadows = sorted(sym for sym in exports if sym in cl_symbols)
 
         f.write(f'(defpackage :{pkg}\n')
         f.write(f'  (:use :cl :gmsh/internal)\n')
         if nicknames:
             nick_str = ' '.join(f':{n}' for n in nicknames)
             f.write(f'  (:nicknames {nick_str})\n')
+        if shadows:
+            f.write(f'  (:shadow\n')
+            for sym in shadows:
+                f.write(f'   #:{sym}\n')
+            f.write(f'  )\n')
         f.write(f'  (:export\n')
         for sym in exports:
             f.write(f'   #:{sym}\n')
