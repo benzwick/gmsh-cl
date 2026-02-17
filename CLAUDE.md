@@ -1,4 +1,46 @@
-# gmsh-cl Development Notes
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+```bash
+# Run all tests (~179 tests)
+./run-tests.sh
+
+# Run a specific test suite
+./run-tests.sh :gmsh-cl/core
+./run-tests.sh :gmsh-cl/geo
+./run-tests.sh :gmsh-cl/occ
+./run-tests.sh :gmsh-cl/mesh
+./run-tests.sh :gmsh-cl/view
+./run-tests.sh :gmsh-cl/options
+./run-tests.sh :gmsh-cl/tutorials
+./run-tests.sh :gmsh-cl/examples
+
+# Test tutorial files standalone
+./test-all-tutorials.sh         # all tutorials
+./test-all-tutorials.sh "t1"    # single tutorial
+
+# Regenerate bindings (only when updating gmsh submodule)
+python3 generate.py
+```
+
+## Architecture
+
+Three-layer design over Gmsh's C API via CFFI:
+
+1. **`src/core/`** — Infrastructure: library loading (`library.lisp`), error condition (`conditions.lisp`), CFFI marshalling macros (`util.lisp`). The `gmsh/internal` package exports helpers used by generated code.
+
+2. **`src/generated/`** — Auto-generated from `generate.py` reading `_reference/gmsh/api/gen.py`. Do NOT hand-edit these files.
+   - `packages.lisp` — All package definitions with nicknames (geo, occ, mesh, view, opt, fltk, onelab, logger, parser, plugin, algorithm)
+   - `bindings.lisp` — Raw `cffi:defcfun` declarations
+   - `*-functions.lisp` — Wrapped CL functions with type coercion, error checking, and memory management
+
+3. **`src/api/`** — Hand-written convenience layer:
+   - `gmsh.lisp` — `with-gmsh`, `with-model`, `start-gui` macros
+   - `geo.lisp` / `occ.lisp` — Batch helpers (`points`, `lines`, `line-loop`)
+   - `recording.lisp` — API call recording and `.geo` file translation
 
 ## CL Bindings: Positional vs Keyword Arguments
 
@@ -23,7 +65,8 @@ macro uses `(car pair)` and `(cdr pair)`.
 
 ## SBCL Float Traps
 
-Gmsh C code triggers IEEE 754 exceptions. Wrap with:
+Gmsh C code triggers IEEE 754 exceptions. `with-gmsh` and `with-gmsh-test`
+handle this automatically. For manual use:
 ```lisp
 (sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero) ...)
 ```
@@ -31,13 +74,16 @@ Gmsh C code triggers IEEE 754 exceptions. Wrap with:
 ## Tutorial/Example Style
 
 Flat scripts, no `defun`/`in-package`/`initialize`/`finalize`. Package-qualified
-calls (`geo:point`, `occ:box`, `mesh:generate`). Loaded via:
+calls (`geo:point`, `occ:box`, `mesh:generate`). `tutorials/` has gmsh tutorial
+ports (t1-t21, x1-x7); `examples/` has API examples (~68 files). Both loaded via:
 ```lisp
-(gmsh:with-gmsh () (load "examples/foo.lisp"))
+(gmsh:with-gmsh () (load "tutorials/t1.lisp"))
+(gmsh:with-gmsh () (load "examples/boolean.lisp"))
 ```
 
 ## Test Infrastructure
 
-- fiveam test framework, `(finishes ...)` checks forms complete without error
-- `with-gmsh-test` macro handles init/finalize/float-traps
-- `./run-tests.sh` runs all 179 tests; `./run-tests.sh :gmsh-cl/examples` for subset
+- fiveam test framework; `(finishes ...)` checks forms complete without error
+- `with-gmsh-test` macro handles init/finalize/float-traps per test
+- Tests defined in `tests/test-*.lisp`, suites in `tests/suite.lisp`
+- CFFI callbacks: `mesh:set-size-callback` needs `(cffi:callback name)` from `cffi:defcallback`, not a CL lambda
