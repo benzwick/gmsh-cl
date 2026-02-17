@@ -17,14 +17,17 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y sbcl ocicl \
+          sudo apt-get install -y sbcl \
             libfltk1.3-dev \
             libocct-modeling-algorithms-dev libocct-modeling-data-dev \
             libocct-data-exchange-dev libocct-foundation-dev \
             libgl-dev libglu1-mesa-dev
 
-      - name: Setup ocicl
+      - name: Install ocicl
         run: |
+          curl -sL -o ocicl.tar.gz https://github.com/ocicl/ocicl-tarball/releases/latest/download/ocicl-Linux-x86_64.tar.gz
+          tar xzf ocicl.tar.gz
+          sudo mv ocicl /usr/local/bin/
           ocicl setup
           ocicl install
 
