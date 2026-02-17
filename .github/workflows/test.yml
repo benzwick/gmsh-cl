@@ -1,0 +1,40 @@
+name: test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sbcl \
+            libfltk1.3-dev \
+            libocct-modeling-algorithms-dev libocct-modeling-data-dev \
+            libocct-data-exchange-dev libocct-foundation-dev \
+            libgl-dev libglu1-mesa-dev
+
+      - name: Cache libgmsh build
+        uses: actions/cache@v4
+        with:
+          path: _reference/gmsh/build
+          key: libgmsh-${{ hashFiles('.gitmodules') }}
+
+      - name: Build libgmsh
+        run: |
+          cd _reference/gmsh
+          mkdir -p build && cd build
+          cmake .. -DENABLE_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+
+      - name: Run tests
+        run: ./run-tests.sh
