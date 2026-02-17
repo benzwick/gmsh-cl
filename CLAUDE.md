@@ -98,12 +98,26 @@ Managed via [ocicl](https://github.com/ocicl/ocicl). Dependencies listed in `oci
 ocicl install   # install deps from ocicl.csv
 ```
 
+## GUI
+
+**Script:** `./gmsh-gui [file.lisp]` — starts GUI with CL scripting. Handles loading, float traps, and `LD_LIBRARY_PATH`.
+
+**From code:** FLTK requires the event loop on the main thread. Use `gmsh:initialize`
+directly (not `with-gmsh`) for interactive sessions. `start-gui` has two modes:
+- `(gmsh:start-gui)` — blocking, returns when window is closed
+- `(gmsh:start-gui :block nil)` — REPL in background thread, `gmsh>` prompt
+
+When loading recorded `.lisp` files, call `(geo:synchronize)` after loading —
+the generated CL code contains raw API calls without synchronize.
+
 ## GUI Scripting
 
 The bundled Gmsh fork (`_reference/gmsh`, branch `bz/lisp-scripting-language`) adds
-CL as a native scripting language. Enable before starting the GUI:
+CL as a native scripting language. Use `"geo,lisp"` so "geo" executes geometry
+and "lisp" records CL code:
 ```lisp
-(opt:set-string "General.ScriptingLanguages" "lisp")
+(gmsh:initialize)
+(opt:set-string "General.ScriptingLanguages" "geo,lisp")
 (gmsh:start-gui)
 ```
-GUI actions generate CL code to stdout and a companion `.lisp` file.
+GUI actions generate CL code to stdout and a companion `.lisp` file (next to the open `.geo`/`.msh`).

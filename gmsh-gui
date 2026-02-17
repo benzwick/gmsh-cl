@@ -1,0 +1,38 @@
+#!/bin/sh
+# Start gmsh-cl with GUI and Lisp scripting
+cd "$(dirname "$0")"
+
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+  cat <<'EOF'
+Usage: gmsh-gui [file.lisp]
+
+Start the Gmsh GUI with Common Lisp scripting enabled.
+GUI actions generate CL code to stdout and a companion .lisp file.
+
+Options:
+  file.lisp    Load and execute a .lisp file before opening the GUI
+  -h, --help   Show this help
+
+Examples:
+  ./gmsh-gui                    # empty GUI
+  ./gmsh-gui untitled.lisp      # load geometry, then open GUI
+  ./gmsh-gui tutorials/t1.lisp  # view a tutorial in the GUI
+EOF
+  exit 0
+fi
+
+INIT=$(mktemp /tmp/gmsh-gui-XXXXXX.lisp)
+trap 'rm -f "$INIT"' EXIT
+
+cat > "$INIT" <<LISP
+(require :asdf)
+(pushnew (truename "$(pwd)/") asdf:*central-registry*)
+(asdf:load-system :gmsh-cl)
+(sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero)
+  (gmsh:initialize)
+  (opt:set-string "General.ScriptingLanguages" "geo,lisp")
+  $(if [ -n "$1" ]; then echo "(load \"$(pwd)/$1\")"; echo "(geo:synchronize)"; fi)
+  (gmsh:start-gui))
+LISP
+
+LD_LIBRARY_PATH=_reference/gmsh/build:$LD_LIBRARY_PATH exec sbcl --noinform --non-interactive --load "$INIT"

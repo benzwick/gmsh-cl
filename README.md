@@ -80,41 +80,76 @@ sbcl
     (gmsh:write "/tmp/boolean.msh")))
 ```
 
-## Interactive REPL with GUI
+## GUI
 
-```lisp
-(gmsh:with-gmsh ()
-  (gmsh:start-gui)     ; opens the Gmsh window in a background thread
-  ;; Now at the REPL:
-  (occ:box 0 0 0 1 1 1)
-  (occ:synchronize)
-  (fltk:update)         ; GUI shows the geometry
-  (mesh:generate :dim 3)
-  (fltk:update))        ; GUI shows the mesh
+### Using the `gmsh-gui` script
+
+The easiest way to start the GUI with CL scripting enabled:
+
+```bash
+./gmsh-gui                    # empty GUI
+./gmsh-gui untitled.lisp      # load a .lisp file, then open GUI
+./gmsh-gui tutorials/t1.lisp  # view a tutorial in the GUI
+./gmsh-gui --help             # show usage
 ```
 
-## GUI scripting — record CL code from mouse clicks
+GUI actions generate CL code to stdout and a companion `.lisp` file
+next to the open `.geo`/`.msh` file.
 
-The bundled Gmsh fork adds Common Lisp as a native scripting language.
-Every GUI action (adding points, creating boxes, boolean operations, etc.)
-generates the corresponding CL code.
+### From the REPL
+
+FLTK requires the event loop on the main thread, so use `gmsh:initialize`
+directly (not `with-gmsh`, which finalizes on return).
+
+**Blocking** (default) — opens the GUI, blocks until the window is closed:
 
 ```lisp
-(gmsh:with-gmsh ()
-  (opt:set-string "General.ScriptingLanguages" "lisp")
+(pushnew (truename ".") asdf:*central-registry*)
+(asdf:load-system :gmsh-cl)
+(sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero)
+  (gmsh:initialize)
+  (opt:set-string "General.ScriptingLanguages" "geo,lisp")
   (gmsh:start-gui))
 ```
 
-GUI actions will:
-- Print CL code to stdout
+**Non-blocking** — GUI on main thread, REPL in a background thread:
+
+```lisp
+(pushnew (truename ".") asdf:*central-registry*)
+(asdf:load-system :gmsh-cl)
+(sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero)
+  (gmsh:initialize)
+  (opt:set-string "General.ScriptingLanguages" "geo,lisp")
+  (gmsh:start-gui :block nil))
+;; Gives you a gmsh> prompt to type commands while GUI is open:
+;;   gmsh> (occ:box 0 0 0 1 1 1)
+;;   gmsh> (occ:synchronize)
+;;   gmsh> (fltk:update)
+;;   gmsh> (mesh:generate :dim 3)
+;;   gmsh> (gmsh:stop-gui)
+```
+
+### GUI scripting
+
+The bundled Gmsh fork adds Common Lisp as a native scripting language.
+Setting `"geo,lisp"` means "geo" executes the geometry and "lisp" records
+the corresponding CL code. GUI actions will:
+
+- Print CL code to stdout (e.g. `lisp: (geo:point 0.5 0.3 0 :mesh-size 1.0)`)
 - Append CL code to a `.lisp` companion file next to the open `.geo`/`.msh` file
 
-The generated code uses the same package-qualified syntax as gmsh-cl
-(`occ:box`, `geo:point`, `mesh:generate`, etc.) and can be loaded directly:
+The generated `.lisp` files can be loaded directly:
 
 ```lisp
 (gmsh:with-gmsh ()
-  (load "recorded-session.lisp"))
+  (load "recorded-session.lisp")
+  (geo:synchronize))
+```
+
+Or viewed in the GUI:
+
+```bash
+./gmsh-gui recorded-session.lisp
 ```
 
 ## Convenience API
