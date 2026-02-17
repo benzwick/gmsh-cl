@@ -15,12 +15,12 @@
     ;; Extrude a boundary layer of 4 elements using mesh normals
     (let ((e1 (geo:extrude-boundary-layer (gmsh:get-entities :dim 2)
                                           :num-elements '(4) :heights '(0.5)
-                                          )))
+                                          :recombine t)))
 
       ;; Extrude a second boundary layer in the opposite direction
       (let ((e2 (geo:extrude-boundary-layer (gmsh:get-entities :dim 2)
                                             :num-elements '(4) :heights '(-0.5)
-                                             :second t)))
+                                            :recombine t :second t)))
 
         ;; Get "top" surfaces created by extrusion
         (let ((top-surf (mapcar #'cdr (remove-if-not (lambda (s) (= (car s) 2)) e2))))

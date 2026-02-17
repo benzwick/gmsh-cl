@@ -268,11 +268,9 @@
   (with-gmsh-test ()
     (finishes (load (example-path "fractures.lisp")))))
 
-;;; aneurysm.lisp requires :by-normals support in extrude-boundary-layer
-;;; (added in newer Gmsh API versions)
-;; (test example-aneurysm
-;;   (with-gmsh-test ()
-;;     (finishes (load (example-path "aneurysm.lisp")))))
+(test example-aneurysm
+  (with-gmsh-test ()
+    (finishes (load (example-path "aneurysm.lisp")))))
 
 ;;; remesh_cavity.lisp takes too long (~5 min) for CI; run manually
 ;; (test example-remesh-cavity
@@ -283,11 +281,9 @@
   (with-gmsh-test ()
     (finishes (load (example-path "glue_and_remesh_stl.lisp")))))
 
-;;; tube_boundary_layer.lisp requires :by-normals support in extrude-boundary-layer
-;;; (added in newer Gmsh API versions)
-;; (test example-tube-boundary-layer
-;;   (with-gmsh-test ()
-;;     (finishes (load (example-path "tube_boundary_layer.lisp")))))
+(test example-tube-boundary-layer
+  (with-gmsh-test ()
+    (finishes (load (example-path "tube_boundary_layer.lisp")))))
 
 (test example-naca-boundary-layer-2d
   (with-gmsh-test ()

@@ -25,7 +25,7 @@
   (let ((e (geo:extrude-boundary-layer (gmsh:get-entities :dim 2)
                                        :num-elements num-elts
                                        :heights depths
-                                       )))
+                                       :recombine t)))
 
     ;; Get "top" surfaces created by extrusion
     (let ((top-surf (mapcar #'cdr (remove-if-not (lambda (s) (= (car s) 2)) e))))
