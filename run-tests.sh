@@ -11,6 +11,7 @@ cd "$(dirname "$0")"
 SUITE="${1:-:gmsh-cl}"
 
 LD_LIBRARY_PATH=_reference/gmsh/build:$LD_LIBRARY_PATH exec sbcl --non-interactive \
+  --eval '(require :asdf)' \
   --eval '(pushnew (truename ".") asdf:*central-registry*)' \
   --eval '(asdf:load-system :gmsh-cl/tests)' \
   --eval "(let ((results (fiveam:run $SUITE)))

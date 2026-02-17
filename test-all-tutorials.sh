@@ -16,6 +16,7 @@ FAILED_LIST=""
 for f in tutorials/${PATTERN}.lisp; do
   name=$(basename "$f" .lisp)
   result=$(LD_LIBRARY_PATH=_reference/gmsh/build:$LD_LIBRARY_PATH sbcl --non-interactive \
+    --eval '(require :asdf)' \
     --eval '(pushnew (truename ".") asdf:*central-registry*)' \
     --eval '(asdf:load-system :gmsh-cl)' \
     --eval "(handler-case (progn (gmsh:with-gmsh () (load \"$f\")) (format t \"OK\")) (error (e) (format t \"FAIL: ~A\" e)))" 2>&1 | grep -oE '^(OK|FAIL:.*)' | tail -1)

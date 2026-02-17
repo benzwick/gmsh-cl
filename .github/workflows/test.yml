@@ -17,11 +17,16 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y sbcl \
+          sudo apt-get install -y sbcl ocicl \
             libfltk1.3-dev \
             libocct-modeling-algorithms-dev libocct-modeling-data-dev \
             libocct-data-exchange-dev libocct-foundation-dev \
             libgl-dev libglu1-mesa-dev
+
+      - name: Setup ocicl
+        run: |
+          ocicl setup
+          ocicl install
 
       - name: Cache libgmsh build
         uses: actions/cache@v4
