@@ -33,6 +33,10 @@
   :description "Tutorial integration tests"
   :in :gmsh-cl)
 
+(def-suite :gmsh-cl/examples
+  :description "Example integration tests"
+  :in :gmsh-cl)
+
 ;;; --- Paths ---
 
 (defvar *project-root*

@@ -56,4 +56,5 @@
      (:file "test-mesh")
      (:file "test-view")
      (:file "test-options")
-     (:file "test-tutorials")))))
+     (:file "test-tutorials")
+     (:file "test-examples")))))
