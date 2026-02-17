@@ -760,7 +760,7 @@ def default_value(a, atype):
         try:
             f = float(v)
             # Format as CL double
-            if '.' in v:
+            if '.' in v or 'e' in v or 'E' in v:
                 return v
             else:
                 return v + '.0'
