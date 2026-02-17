@@ -753,18 +753,44 @@ def default_value(a, atype):
     elif atype == 'isize':
         return str(val)
     elif atype == 'idouble':
-        # Handle mathematical expressions
         v = str(val)
-        v = v.replace('M_PI', 'pi').replace('pi', '(coerce pi \'double-float)')
-        # Handle simple numeric values
+        # Handle simple numeric values first
         if v.endswith('.'):
             v = v + '0'
         try:
-            float(v)
-            return v.replace('.', '.0') if '.' not in v else v
+            f = float(v)
+            # Format as CL double
+            if '.' in v:
+                return v
+            else:
+                return v + '.0'
         except ValueError:
-            # It's an expression like 2*pi
-            return v
+            pass
+        # Handle mathematical expressions involving pi
+        # Use the python_value which has 'pi' instead of 'M_PI'
+        v = str(val)
+        v = v.replace('M_PI', 'pi')
+        # Match patterns like: 2*pi, -pi/2, -M_PI/2
+        import re as re2
+        # "2*pi" -> (* 2 pi)
+        m = re2.match(r'^(-?\d+)\*pi$', v)
+        if m:
+            return f'(* {m.group(1)} pi)'
+        # "-pi/2" or "pi/2"
+        m = re2.match(r'^(-?)pi/(\d+)$', v)
+        if m:
+            sign = m.group(1)
+            denom = m.group(2)
+            if sign:
+                return f'(/ (- pi) {denom})'
+            return f'(/ pi {denom})'
+        # Just "pi" or "-pi"
+        if v == 'pi':
+            return 'pi'
+        if v == '-pi':
+            return '(- pi)'
+        # Fallback: return as-is (may need manual fix)
+        return v
     elif atype == 'istring':
         s = str(val).strip('"').strip("'")
         return f'"{s}"'
