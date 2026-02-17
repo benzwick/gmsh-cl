@@ -7,11 +7,14 @@
 
 (defmacro with-gmsh ((&rest options) &body body)
   "Initialize gmsh, execute BODY, finalize on exit.
-   OPTIONS are keyword arguments passed to INITIALIZE."
+   OPTIONS are keyword arguments passed to INITIALIZE.
+   On SBCL, masks floating-point traps that gmsh's C code may trigger."
   `(progn
      (initialize ,@options)
      (unwind-protect
-          (progn ,@body)
+          #+sbcl (sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero)
+                   ,@body)
+          #-sbcl (progn ,@body)
        (finalize))))
 
 (defmacro with-model ((name) &body body)
