@@ -41,7 +41,10 @@ export LD_LIBRARY_PATH=$(pwd):$LD_LIBRARY_PATH
 
 ## Loading
 
+From the project directory, in SBCL:
+
 ```lisp
+(pushnew (truename ".") asdf:*central-registry*)
 (ql:quickload :gmsh-cl)
 ```
 
