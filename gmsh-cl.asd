@@ -2,7 +2,7 @@
   :version "0.1.0"
   :description "Common Lisp interface for Gmsh"
   :license "GPL-2.0+"
-  :depends-on ("cffi")
+  :depends-on ("cffi" "bordeaux-threads")
   :serial t
   :components
   ((:module "src"
