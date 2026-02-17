@@ -675,7 +675,7 @@ entities."
   (with-ierr (ierr)
       (gmsh/internal::%model-occ-remove-all-duplicates  ierr)))
 
-(defun heal-shapes (&key (dim-tags '()) (tolerance 1e-8.0) (fix-degenerated t) (fix-small-edges t) (fix-small-faces t) (sew-faces t) (make-solids t))
+(defun heal-shapes (&key (dim-tags '()) (tolerance 1e-8) (fix-degenerated t) (fix-small-edges t) (fix-small-faces t) (sew-faces t) (make-solids t))
   "Apply various healing procedures to the entities `dimTags' (given as a
 vector of (dim, tag) pairs), or to all the entities in the model if
 `dimTags' is empty, in the OpenCASCADE CAD representation. Return the
