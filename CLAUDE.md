@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Run all tests (~179 tests)
+# Run all tests (~194 tests)
 ./run-tests.sh
 
 # Run a specific test suite
@@ -38,8 +38,11 @@ Three-layer design over Gmsh's C API via CFFI:
    - `*-functions.lisp` — Wrapped CL functions with type coercion, error checking, and memory management
 
 3. **`src/api/`** — Hand-written convenience layer:
-   - `gmsh.lisp` — `with-gmsh`, `with-model`, `start-gui` macros
-   - `geo.lisp` / `occ.lisp` — Batch helpers (`points`, `lines`, `line-loop`)
+   - `gmsh.lisp` — `with-gmsh`, `with-model`, `start-gui`, `with-gui-lock` macros
+   - `dim-tags.lisp` — Dim-tag constructors/accessors (`volume-tag`, `surface-tags`, `tag`, `tags-of`)
+   - `fields.lisp` — Declarative `mesh:field` helper
+   - `mesh-helpers.lisp` — `define-size-callback` macro
+   - `geo.lisp` / `occ.lisp` — Batch helpers (`points`, `lines`, `line-loop`, `polygon`)
    - `recording.lisp` — API call recording and `.geo` file translation
 
 ## CL Bindings: Positional vs Keyword Arguments
@@ -75,7 +78,7 @@ handle this automatically. For manual use:
 
 Flat scripts, no `defun`/`in-package`/`initialize`/`finalize`. Package-qualified
 calls (`geo:point`, `occ:box`, `mesh:generate`). `tutorials/` has gmsh tutorial
-ports (t1-t21, x1-x7); `examples/` has API examples (~68 files). Both loaded via:
+ports (t1-t21, x1-x7); `examples/` has API examples (~85 files). Both loaded via:
 ```lisp
 (gmsh:with-gmsh () (load "tutorials/t1.lisp"))
 (gmsh:with-gmsh () (load "examples/boolean.lisp"))
@@ -86,4 +89,21 @@ ports (t1-t21, x1-x7); `examples/` has API examples (~68 files). Both loaded via
 - fiveam test framework; `(finishes ...)` checks forms complete without error
 - `with-gmsh-test` macro handles init/finalize/float-traps per test
 - Tests defined in `tests/test-*.lisp`, suites in `tests/suite.lisp`
-- CFFI callbacks: `mesh:set-size-callback` needs `(cffi:callback name)` from `cffi:defcallback`, not a CL lambda
+- CFFI callbacks: `mesh:set-size-callback` needs `(cffi:callback name)` from `cffi:defcallback`, not a CL lambda. Prefer the `mesh:define-size-callback` macro which handles both.
+
+## Dependencies
+
+Managed via [ocicl](https://github.com/ocicl/ocicl). Dependencies listed in `ocicl.csv`, installed to gitignored `ocicl/` directory:
+```bash
+ocicl install   # install deps from ocicl.csv
+```
+
+## GUI Scripting
+
+The bundled Gmsh fork (`_reference/gmsh`, branch `bz/lisp-scripting-language`) adds
+CL as a native scripting language. Enable before starting the GUI:
+```lisp
+(opt:set-string "General.ScriptingLanguages" "lisp")
+(gmsh:start-gui)
+```
+GUI actions generate CL code to stdout and a companion `.lisp` file.
