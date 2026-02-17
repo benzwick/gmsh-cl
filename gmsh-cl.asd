@@ -40,3 +40,20 @@
        (:file "geo")
        (:file "occ")
        (:file "recording")))))))
+
+(defsystem "gmsh-cl/tests"
+  :description "Tests for gmsh-cl"
+  :depends-on ("gmsh-cl" "fiveam")
+  :serial t
+  :components
+  ((:module "tests"
+    :components
+    ((:file "package")
+     (:file "suite")
+     (:file "test-core")
+     (:file "test-geo")
+     (:file "test-occ")
+     (:file "test-mesh")
+     (:file "test-view")
+     (:file "test-options")
+     (:file "test-tutorials")))))
