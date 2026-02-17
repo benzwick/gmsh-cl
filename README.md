@@ -82,15 +82,15 @@ sbcl
 
 ## GUI
 
-### Using the `gmsh-gui` script
+### Using the `gmsh-cl` script
 
 The easiest way to start the GUI with CL scripting enabled:
 
 ```bash
-./gmsh-gui                    # empty GUI
-./gmsh-gui untitled.lisp      # load a .lisp file, then open GUI
-./gmsh-gui tutorials/t1.lisp  # view a tutorial in the GUI
-./gmsh-gui --help             # show usage
+./gmsh-cl                    # empty GUI
+./gmsh-cl untitled.lisp      # load a .lisp file, then open GUI
+./gmsh-cl tutorials/t1.lisp  # view a tutorial in the GUI
+./gmsh-cl --help             # show usage
 ```
 
 GUI actions generate CL code to stdout and a companion `.lisp` file
@@ -149,7 +149,7 @@ The generated `.lisp` files can be loaded directly:
 Or viewed in the GUI:
 
 ```bash
-./gmsh-gui recorded-session.lisp
+./gmsh-cl recorded-session.lisp
 ```
 
 ## Convenience API

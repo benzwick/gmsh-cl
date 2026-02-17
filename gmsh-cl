@@ -1,0 +1,59 @@
+#!/bin/sh
+# Start gmsh-cl with GUI and interactive REPL
+# GUI clicks and REPL commands are both recorded to a .lisp file
+cd "$(dirname "$0")"
+
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+  cat <<'EOF'
+Usage: gmsh-cl [options] [file.lisp]
+
+Start the Gmsh GUI with an interactive CL REPL. Both GUI clicks and
+REPL commands are recorded to a .lisp file.
+
+Options:
+  file.lisp      Load and execute a .lisp file before opening the GUI
+  -o FILE        Record session to FILE (default: untitled.lisp)
+  -h, --help     Show this help
+
+Examples:
+  ./gmsh-cl                         # GUI + REPL, record to untitled.lisp
+  ./gmsh-cl -o my-model.lisp        # record to my-model.lisp
+  ./gmsh-cl model.lisp              # load model, then GUI + REPL
+  ./gmsh-cl model.lisp -o out.lisp  # load model, record to out.lisp
+EOF
+  exit 0
+fi
+
+# Parse arguments
+LOAD_FILE=""
+RECORD_FILE="untitled.lisp"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -o) RECORD_FILE="$2"; shift 2 ;;
+    *)  LOAD_FILE="$1"; shift ;;
+  esac
+done
+
+INIT=$(mktemp /tmp/gmsh-cl-XXXXXX.lisp)
+trap 'rm -f "$INIT"' EXIT
+
+ABSRECORD="$(pwd)/$RECORD_FILE"
+# Derive .geo filename from record file (untitled.lisp -> untitled.geo)
+ABSGEO="$(pwd)/$(echo "$RECORD_FILE" | sed 's/\.[^.]*$/.geo/')"
+
+cat > "$INIT" <<LISP
+(require :asdf)
+(pushnew (truename "$(pwd)/") asdf:*central-registry*)
+(asdf:load-system :gmsh-cl)
+(sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero)
+  (gmsh:initialize)
+  (gmsh:open "$ABSGEO")
+  (opt:set-string "General.ScriptingLanguages" "geo,lisp")
+  $(if [ -n "$LOAD_FILE" ]; then echo "(when (probe-file \"$(pwd)/$LOAD_FILE\") (load \"$(pwd)/$LOAD_FILE\") (geo:synchronize))"; fi)
+  (gmsh:with-recording ("$ABSRECORD")
+    (gmsh:start-gui :block nil))
+  (gmsh:finalize)
+  (sb-ext:exit))
+LISP
+
+LD_LIBRARY_PATH=_reference/gmsh/build:$LD_LIBRARY_PATH exec sbcl --noinform --non-interactive --load "$INIT"
