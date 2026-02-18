@@ -46,7 +46,9 @@ jobs:
         run: |
           cd _reference/gmsh
           mkdir -p build && cd build
-          cmake .. -DENABLE_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=Release
+          if [ ! -f CMakeCache.txt ]; then
+            cmake .. -DENABLE_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=Release
+          fi
           make -j$(nproc)
 
       - name: Save libgmsh cache
