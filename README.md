@@ -1,5 +1,7 @@
 # gmsh-cl
 
+[![test](https://github.com/benzwick/gmsh-cl/actions/workflows/test.yml/badge.svg)](https://github.com/benzwick/gmsh-cl/actions/workflows/test.yml)
+
 Common Lisp interface for [Gmsh](https://gmsh.info). Interactive REPL-driven geometry creation, meshing, and visualization.
 
 ## Prerequisites
