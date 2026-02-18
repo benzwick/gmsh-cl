@@ -37,6 +37,7 @@ jobs:
           ocicl install
 
       - name: Restore libgmsh cache
+        id: cache-libgmsh
         uses: actions/cache/restore@v4
         with:
           path: _reference/gmsh/build
@@ -58,7 +59,7 @@ jobs:
           make -j$(nproc)
 
       - name: Save libgmsh cache
-        if: always()
+        if: always() && steps.cache-libgmsh.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: _reference/gmsh/build
