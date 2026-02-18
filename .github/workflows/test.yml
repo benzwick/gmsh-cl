@@ -41,6 +41,7 @@ jobs:
         with:
           path: _reference/gmsh/build
           key: libgmsh-${{ hashFiles('.gitmodules') }}
+          save-always: true
 
       - name: Build libgmsh
         run: |
