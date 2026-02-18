@@ -36,12 +36,11 @@ jobs:
           ocicl setup >> ~/.sbclrc
           ocicl install
 
-      - name: Cache libgmsh build
-        uses: actions/cache@v4
+      - name: Restore libgmsh cache
+        uses: actions/cache/restore@v4
         with:
           path: _reference/gmsh/build
           key: libgmsh-${{ hashFiles('.gitmodules') }}
-          save-always: true
 
       - name: Build libgmsh
         run: |
@@ -49,6 +48,13 @@ jobs:
           mkdir -p build && cd build
           cmake .. -DENABLE_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=Release
           make -j$(nproc)
+
+      - name: Save libgmsh cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: _reference/gmsh/build
+          key: libgmsh-${{ hashFiles('.gitmodules') }}
 
       - name: Run tests
         run: ./run-tests.sh
