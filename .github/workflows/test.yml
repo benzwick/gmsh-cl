@@ -48,6 +48,10 @@ jobs:
           mkdir -p build && cd build
           if [ ! -f CMakeCache.txt ]; then
             cmake .. -DENABLE_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=Release
+          else
+            # Touch cached build artifacts so make sees them as newer than
+            # the source files (git checkout sets source timestamps to now)
+            find . -type f -exec touch {} +
           fi
           make -j$(nproc)
 
