@@ -25,9 +25,13 @@ jobs:
 
       - name: Install ocicl
         run: |
-          curl -sL -o ocicl.tar.gz https://github.com/ocicl/ocicl-tarball/releases/latest/download/ocicl-Linux-x86_64.tar.gz
-          tar xzf ocicl.tar.gz
-          sudo mv ocicl /usr/local/bin/
+          OCICL_VERSION=2.16.5
+          LATEST=$(curl -sL https://api.github.com/repos/ocicl/ocicl/releases/latest | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
+          if [ "$LATEST" != "$OCICL_VERSION" ]; then
+            echo "::warning::ocicl $LATEST is available, update from $OCICL_VERSION"
+          fi
+          wget -q "https://github.com/ocicl/ocicl/releases/download/v${OCICL_VERSION}/ocicl_${OCICL_VERSION}-1_amd64.deb"
+          sudo apt install -y ./ocicl_${OCICL_VERSION}-1_amd64.deb
           ocicl setup
           ocicl install
 
