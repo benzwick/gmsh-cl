@@ -50,8 +50,10 @@ jobs:
             cmake .. -DENABLE_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=Release
           else
             # Touch cached build artifacts so make sees them as newer than
-            # the source files (git checkout sets source timestamps to now)
-            find . -type f -exec touch {} +
+            # the source files (git checkout sets source timestamps to "now").
+            # Use a future timestamp to ensure build outputs are newer than
+            # any cmake-tracked dependency files.
+            find . -type f -exec touch -t $(date -d '+1 minute' +%Y%m%d%H%M.%S) {} +
           fi
           make -j$(nproc)
 
